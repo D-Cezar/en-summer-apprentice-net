@@ -1,5 +1,7 @@
+using EndavaProject.ExceptionRepository;
 using EndavaProject.Models;
 using EndavaProject.Profiles;
+using EndavaProject.Repositories.EventRepositories;
 using EndavaProject.Repositories.OrderRepositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<EndavaPrjContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 builder.Services.AddControllers();
@@ -24,6 +28,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware(typeof(ExceptionHandlingMiddleware));
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -31,3 +37,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program
+{ }

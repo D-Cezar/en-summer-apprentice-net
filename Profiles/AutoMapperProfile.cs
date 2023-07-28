@@ -11,6 +11,8 @@ namespace EndavaProject.Profiles
             CreateMap<Customer, CustomerDto>().ReverseMap();
             CreateMap<Order, OrderDto>().ReverseMap();
             CreateMap<TicketCategory, TicketCategoryDto>().ReverseMap();
+            CreateMap<Event, EventDto>().ForMember(e => e.ticketCategory, tg => tg.MapFrom(src => src.TicketCategories)).ReverseMap();
+            CreateMap<Venue, VenueDto>().ReverseMap();
         }
     }
 }

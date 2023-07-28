@@ -43,6 +43,7 @@ namespace EndavaProject.Repositories.OrderRepositories
         {
             var order = await _context.Orders.FirstOrDefaultAsync(x => x.OrdersId == id);
             modifications.ApplyTo(order);
+            order.TotalPrice = order.NumberOfTickets * order.TicketCategory.Price;
             await _context.SaveChangesAsync();
         }
     }

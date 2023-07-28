@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using EndavaProject.Models;
 using EndavaProject.Models.DTOs;
 using EndavaProject.Repositories.OrderRepositories;
 using Microsoft.AspNetCore.JsonPatch;
@@ -21,7 +20,7 @@ namespace EndavaProject.Controllers
 
         [HttpGet]
         [Route("api/[controller]/{id}")]
-        public async Task<ActionResult<OrderDto>> GetOrder(int id)
+        public async Task<ActionResult<OrderDto>> GetOrder([FromRoute] long id)
         {
             var order = await _orderRepository.Get(id);
 
@@ -32,7 +31,7 @@ namespace EndavaProject.Controllers
         }
 
         [HttpGet]
-        [Route("api/[controller]")]
+        [Route($"api/{Constants.ControllerShortcut}")]
         public async Task<ActionResult<List<OrderDto>>> GetOrders()
         {
             var orders = await _orderRepository.GetAll();
