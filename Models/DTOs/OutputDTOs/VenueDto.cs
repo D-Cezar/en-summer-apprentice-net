@@ -1,4 +1,4 @@
-﻿namespace EndavaProject.Models.DTOs
+﻿namespace EndavaProject.Models.DTOs.OutputDTOs
 {
     public class VenueDto
     {

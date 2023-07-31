@@ -1,8 +1,10 @@
 using EndavaProject.ExceptionRepository;
 using EndavaProject.Models;
 using EndavaProject.Profiles;
+using EndavaProject.Repositories.CustomerRepositories;
 using EndavaProject.Repositories.EventRepositories;
 using EndavaProject.Repositories.OrderRepositories;
+using EndavaProject.Repositories.TicketCategoryRepositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<EndavaPrjContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<ITicketCategoryRepository, TicketCategoryRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 

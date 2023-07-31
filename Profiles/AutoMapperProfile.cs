@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EndavaProject.Models;
-using EndavaProject.Models.DTOs;
+using EndavaProject.Models.DTOs.InputDTOs;
+using EndavaProject.Models.DTOs.OutputDTOs;
 
 namespace EndavaProject.Profiles
 {
@@ -13,6 +14,7 @@ namespace EndavaProject.Profiles
             CreateMap<TicketCategory, TicketCategoryDto>().ReverseMap();
             CreateMap<Event, EventDto>().ForMember(e => e.ticketCategory, tg => tg.MapFrom(src => src.TicketCategories)).ReverseMap();
             CreateMap<Venue, VenueDto>().ReverseMap();
+            CreateMap<OrderInDto, Order>().ForMember(x => x.OrderedAt, y => y.MapFrom(_ => DateTime.Now));
         }
     }
 }

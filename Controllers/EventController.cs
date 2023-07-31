@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using EndavaProject.Models.DTOs;
+using EndavaProject.Models.DTOs.OutputDTOs;
 using EndavaProject.Repositories.EventRepositories;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EndavaProject.Controllers
@@ -36,6 +37,28 @@ namespace EndavaProject.Controllers
             var events = await _eventRepository.GetAll();
             var result = _mapper.Map<List<EventDto>>(events);
             return Ok(result);
+        }
+
+        [HttpDelete]
+        [Route("api/[controller]/[action]/{id}")]
+        public async Task<ActionResult> DeleteOrder([FromRoute] long id)
+        {
+            var deletedOrderNumber = await _eventRepository.Delete(id);
+
+            if (deletedOrderNumber == 0) { return NotFound(); };
+
+            return Ok();
+        }
+
+        [HttpPatch]
+        [Route("api/[controller]/[action]/{id}")]
+        public async Task<ActionResult> PatchOrder([FromRoute] long id, JsonPatchDocument modifications)
+        {
+            var restrictedPaths = new HashSet<string> { "/OrderId", "/TotalPrice", "/CustomerId" };
+            var containsRestrictedProperties = modifications.Operations.Any(x => restrictedPaths.Contains(x.path));
+            if (containsRestrictedProperties) { return BadRequest(); }
+            _eventRepository.Patch(id, modifications);
+            return Ok();
         }
     }
 }

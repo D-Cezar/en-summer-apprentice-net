@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
-using EndavaProject.Models.DTOs;
+using EndavaProject.Models;
+using EndavaProject.Models.DTOs.InputDTOs;
+using EndavaProject.Models.DTOs.OutputDTOs;
+using EndavaProject.Repositories.CustomerRepositories;
 using EndavaProject.Repositories.OrderRepositories;
+using EndavaProject.Repositories.TicketCategoryRepositories;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +15,16 @@ namespace EndavaProject.Controllers
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
+        private readonly ITicketCategoryRepository _ticketCategoryRepository;
+        private readonly ICustomerRepository _customerRepository;
 
-        public OrderController(IOrderRepository orderRepository, IMapper mapper)
+        public OrderController(IOrderRepository orderRepository, IMapper mapper,
+            ITicketCategoryRepository ticketCategoryRepository, ICustomerRepository customerRepository)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
+            _ticketCategoryRepository = ticketCategoryRepository;
+            _customerRepository = customerRepository;
         }
 
         [HttpGet]
@@ -59,6 +68,24 @@ namespace EndavaProject.Controllers
             if (containsRestrictedProperties) { return BadRequest(); }
             _orderRepository.Patch(id, modifications);
             return Ok();
+        }
+
+        [HttpPost]
+        [Route($"api/{Constants.ControllerShortcut}/{Constants.ActionShortcut}")]
+        public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] OrderInDto orderTemplate)
+        {
+            if (orderTemplate.NumberOfTickets == 0)
+                return BadRequest();
+            var newOrder = _mapper.Map<Order>(orderTemplate);
+            var ticketCategory = await _ticketCategoryRepository.Get(newOrder.TicketCategoryId);
+            var customer = await _customerRepository.Get(newOrder.CustomersId);
+            if (ticketCategory == null || customer == null)
+                return BadRequest();
+            newOrder.TotalPrice = newOrder.NumberOfTickets * ticketCategory.Price;
+            await _orderRepository.Add(newOrder);
+            var response = _mapper.Map<OrderDto>(newOrder);
+
+            return Ok(response);
         }
     }
 }

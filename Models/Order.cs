@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EndavaProject.Models;
+﻿namespace EndavaProject.Models;
 
 public partial class Order
 {
@@ -13,9 +10,9 @@ public partial class Order
 
     public double? TotalPrice { get; set; }
 
-    public long? CustomersId { get; set; }
+    public long CustomersId { get; set; }
 
-    public long? TicketCategoryId { get; set; }
+    public long TicketCategoryId { get; set; }
 
     public virtual Customer? Customers { get; set; }
 
